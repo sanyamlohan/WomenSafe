@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,14 +24,18 @@ public class AddDetailsActivity extends AppCompatActivity {
     Button mAddDetailsBtn;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    FirebaseUser user;
     ProgressBar mProgressBar;
     String userID;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_details);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
+        userID = user.getUid();
 
         mUsername = findViewById(R.id.usernameEdit);
         mContact1 = findViewById(R.id.contact1Edit);
@@ -54,7 +60,6 @@ public class AddDetailsActivity extends AppCompatActivity {
                 String ContactNo3 = mContact3.getText().toString();
                 String ContactNo4 = mContact4.getText().toString();
                 String ContactNo5 = mContact5.getText().toString();
-                userID = Username;
 
                 // Now, we are getting all these data from the edit text .
                 // so, now we have to add this data in our firebase database.
@@ -64,9 +69,11 @@ public class AddDetailsActivity extends AppCompatActivity {
                 // so for that we have to create a model
 
                 WomenRVModal womenRVModal = new WomenRVModal(Username, ContactNo1, ContactNo2, ContactNo3, ContactNo4, ContactNo5, userID);
+                Toast.makeText(AddDetailsActivity.this, "let's start", Toast.LENGTH_SHORT).show();
 
                 // Now, after this we will be adding this modal to our database
                 // for that firstly we have to call database reference
+
 
                 databaseReference.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -76,8 +83,9 @@ public class AddDetailsActivity extends AppCompatActivity {
                         // inside onDataChange method we have to set this data
                         databaseReference.child(userID).setValue(womenRVModal);
                         // so, this will add all the data
-
                         Toast.makeText(AddDetailsActivity.this, "Data Loaded", Toast.LENGTH_SHORT).show();
+
+
                         startActivity(new Intent(AddDetailsActivity.this, MainActivity.class));
 
                     }

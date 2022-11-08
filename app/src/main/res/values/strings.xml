@@ -37,4 +37,6 @@
     <string name="stop">Stop</string>
     <string name="pause">Pause</string>
     <string name="play">Play</string>
+    <string name="call">call</string>
+    <string name="message">message</string>
 </resources>

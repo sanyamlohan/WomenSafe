@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -24,6 +27,8 @@ public class EditDetailsActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     ProgressBar mProgressBar;
+    FirebaseUser user;
+    String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,10 @@ public class EditDetailsActivity extends AppCompatActivity {
         mContact4 = findViewById(R.id.contact4Edit);
         mContact5 = findViewById(R.id.contact5Edit);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
+        userID = user.getUid();
+
         mEditDetailsBtn = findViewById(R.id.EditDetailsButton);
         mProgressBar = findViewById(R.id.progressBar4);
 
@@ -45,6 +54,7 @@ public class EditDetailsActivity extends AppCompatActivity {
         mEditDetailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mProgressBar.setVisibility(View.VISIBLE);
                 String userName = mUsername.getText().toString();
                 String contact1 = mContact1.getText().toString();
                 String contact2 = mContact2.getText().toString();
@@ -69,13 +79,15 @@ public class EditDetailsActivity extends AppCompatActivity {
         Data.put("contactNo5", contact5);
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Details");
-        databaseReference.child(userName).updateChildren(Data).addOnCompleteListener(new OnCompleteListener<Void>() {
+        Log.e("testing", "enter in update data");
+        databaseReference.child(userID).updateChildren(Data).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 // so, we will get the result in the form of a task
+                Log.e("testing", "enter in firebase");
 
                 if(task.isSuccessful()){
-                    mProgressBar.setVisibility(View.VISIBLE);
+
                     mUsername.setText("");
                     mContact1.setText("");
                     mContact2.setText("");
